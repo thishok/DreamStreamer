@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-dreamstreamer-dev-b2fc8-authRole",
+      "UnauthRoleArn": "arn:aws:iam::339713188936:role/amplify-dreamstreamer-dev-b2fc8-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::339713188936:role/amplify-dreamstreamer-dev-b2fc8-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-dreamstreamer-dev-b2fc8-deployment",
+      "UnauthRoleName": "amplify-dreamstreamer-dev-b2fc8-unauthRole",
+      "StackName": "amplify-dreamstreamer-dev-b2fc8",
+      "StackId": "arn:aws:cloudformation:us-east-1:339713188936:stack/amplify-dreamstreamer-dev-b2fc8/58de37f0-69ff-11ef-8e68-12d291371dd5",
+      "AmplifyAppId": "d2hcwwqvdubz8q"
+    },
+    "categories": {
+      "auth": {
+        "dreamstreamer12378fdc": {}
+      }
+    }
+  }
+}
