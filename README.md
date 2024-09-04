@@ -1,19 +1,21 @@
-Here are the terminal commands in order to run this.
+# Project Setup and Running Guide
 
-npm install -g @aws-amplify/cli
+## Prerequisites
 
-amplify configure
+Before you begin, ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (which includes npm)
+- [AWS CLI](https://aws.amazon.com/cli/) (for AWS Amplify)
+- [Amplify CLI](https://docs.amplify.aws/cli/)
 
-npx create-react-app <name of your app>
+## Installation
 
-cd <name of your app>
+1. **Install Dependencies:**
 
+   Run the following command to install the required npm packages:
+
+   ```bash
+   npm install
 amplify init
-
 amplify add auth
-
-amplify push
-
 npm install aws-amplify @aws-amplify/ui-react
-
 npm start
