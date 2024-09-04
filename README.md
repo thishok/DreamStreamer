@@ -15,7 +15,15 @@ Before you begin, ensure you have the following installed:
 
    ```bash
    npm install
+   
+      ```bash
 amplify init
+
+   ```bash
 amplify add auth
+
+   ```bash
 npm install aws-amplify @aws-amplify/ui-react
+
+   ```bash
 npm start
