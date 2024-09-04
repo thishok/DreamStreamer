@@ -13,17 +13,13 @@ Before you begin, ensure you have the following installed:
 
    Run the following command to install the required npm packages:
 
-   ```bash
+
    npm install
-   
-      ```bash
-amplify init
 
-   ```bash
-amplify add auth
+   amplify init
 
-   ```bash
-npm install aws-amplify @aws-amplify/ui-react
+   amplify add auth
 
-   ```bash
-npm start
+   npm install aws-amplify @aws-amplify/ui-react
+
+   npm start
