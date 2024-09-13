@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaVolumeUp } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const DreamStreamer = ({ signOut }) => {
   const [albums, setAlbums] = useState([]);
@@ -178,8 +179,9 @@ const DreamStreamer = ({ signOut }) => {
     <div className="w-full h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 bg-gray-800">
-        <h1 className="text-2xl font-bold">DreamStreamer</h1>
-        <button
+       <Link to="/"><h1 className="text-2xl font-bold">DreamStreamer</h1></Link>
+         
+      <button
           onClick={signOut}
           className="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200"
         >
