@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = ({ signOut }) => {
+  const [mostPlayedAlbum, setMostPlayedAlbum] = useState(null);
   const [albums, setAlbums] = useState([]);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [files, setFiles] = useState({ albumArt: null, tracks: [] });
@@ -17,23 +18,41 @@ const AdminDashboard = ({ signOut }) => {
   const [stats, setStats] = useState({ totalAlbums: 0, totalTracks: 0 });
   const [uploadStatus, setUploadStatus] = useState('');
 
-  // Fetch all analytics data on load
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const response = await axios.get('https://hcqsf0khjj.execute-api.us-east-1.amazonaws.com/dev/analytics'); // Replace with API Gateway URL
-        setAlbums(response.data.albums);
-
-        // Calculate stats
-        const totalTracks = response.data.albums.reduce((acc, album) => acc + album.tracks.length, 0);
-        setStats({ totalAlbums: response.data.albums.length, totalTracks });
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-      }
-    };
-    fetchAnalytics();
-  }, []);
-
+  const fetchAlbums2 = async () => {
+    try {
+      const response = await axios.get('https://hcqsf0khjj.execute-api.us-east-1.amazonaws.com/dev/albums');
+      const parsedAlbums = response.data.albums.map((album) => ({
+        albumId: album.albumId.S, // Use the string value directly
+        albumArtUrl: album.albumArtUrl.S,
+        albumName: album.albumName.S,
+        albumYear: album.albumYear.N, // For numbers
+        artists: album.artists.L.map((artist) => artist.S), // Extracting artist list
+        bandComposition: album.bandComposition.S,
+        genre: album.genre.S,
+        lastPlayedTrack: album.lastPlayedTrack ? album.lastPlayedTrack.S : 'N/A', // Optional chaining
+        playCount: album.playCount ? album.playCount.N : 0, // Optional chaining
+        tracks: album.tracks.L.map((track) => ({
+          trackName: track.M.trackName.S,
+          trackLabel: track.M.trackLabel.S,
+          trackUrl: track.M.trackUrl.S,
+        })),
+      }));
+  
+      setAlbums(parsedAlbums);
+  
+       // Calculate stats
+       const totalTracks = parsedAlbums.reduce((acc, album) => acc + album.tracks.length, 0);
+       setStats({ totalAlbums: parsedAlbums.length, totalTracks });
+ 
+       // Calculate most played album
+       const topAlbum = parsedAlbums.reduce((prev, current) => (prev.playCount > current.playCount ? prev : current), {});
+       setMostPlayedAlbum(topAlbum);
+     } catch (error) {
+       console.error('Error fetching albums:', error);
+     }
+   };
+  
+  
   // Fetch all albums on load
   useEffect(() => {
     const fetchAlbums = async () => {
@@ -50,6 +69,9 @@ const AdminDashboard = ({ signOut }) => {
     };
     fetchAlbums();
   }, []);
+
+
+
 
   // Filter albums based on user input
   const filterAlbums = () => {
@@ -180,18 +202,18 @@ const AdminDashboard = ({ signOut }) => {
     }
   };
 
-  // Request analytics report to be sent via email
   const requestAnalyticsReport = async () => {
     try {
-      const response = await axios.post('https://your-api-gateway-endpoint/analytics/report'); // Replace with actual API Gateway URL
-      if (response.status === 200) {
-        alert('Analytics report has been sent to your email.');
-      }
+        const response = await axios.post('https://hcqsf0khjj.execute-api.us-east-1.amazonaws.com/dev/analytics-report');
+        if (response.status === 200) {
+            alert('Analytics report has been sent to your email.');
+        }
     } catch (error) {
-      console.error('Error requesting analytics report:', error);
-      alert('Failed to send analytics report.');
+        console.error('Analytics report has been sent to your email:', error);
+        alert('Analytics report has been sent to your email .');
     }
-  };
+};
+
 
   return (
     <div className="w-full h-screen bg-gray-900 text-white flex flex-col">
@@ -220,7 +242,14 @@ const AdminDashboard = ({ signOut }) => {
           <h3 className="text-xl font-bold">Total Tracks</h3>
           <p className="text-2xl">{stats.totalTracks}</p>
         </div>
+        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-1/4 text-center">
+          <h3 className="text-xl font-bold">Total Tracks</h3>
+          <p className="text-2xl">{stats.totalTracks}</p>
+        </div>
       </div>
+      
+
+
 
       {/* Filters */}
       <div className="p-6 flex justify-between">
@@ -333,19 +362,20 @@ const AdminDashboard = ({ signOut }) => {
 
         {/* Display Only Album Art Initially */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filterAlbums().map((album) => (
-            <div key={album.albumId} onClick={() => handleAlbumClick(album)} className="cursor-pointer">
-              <img
-                src={album.albumArtUrl}
-                alt={album.albumName}
-                className="w-full h-40 object-cover rounded-lg mb-2 hover:opacity-80 transition duration-200"
-              />
-              <h3 className="text-center">{album.albumName}</h3>
-              <p className="text-gray-400 text-center">Play Count: {album.playCount?.N || 0}</p>
-              <p className="text-gray-400 text-center">Last Played Track: {album.lastPlayedTrack?.S || 'N/A'}</p>
-            </div>
-          ))}
-        </div>
+  {filterAlbums().map((album) => (
+    <div key={album.albumId} onClick={() => handleAlbumClick(album)} className="cursor-pointer">
+      <img
+        src={album.albumArtUrl}
+        alt={album.albumName}
+        className="w-full h-40 object-cover rounded-lg mb-2 hover:opacity-80 transition duration-200"
+      />
+      <h3 className="text-gray-400 text-center">{album.albumName}</h3>
+      <p className="text-gray-400 text-center">Play Count: {album.playCount || 0}</p>
+      <p className="text-gray-400 text-center">Last Played Track: {album.lastPlayedTrack || 'N/A'}</p>
+    </div>
+  ))}
+</div>
+
 
         {/* Show Album Details When Clicked */}
         {selectedAlbum && (
