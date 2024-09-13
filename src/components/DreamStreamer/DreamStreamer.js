@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaPlay, FaPause, FaStepForward, FaStepBackward, FaRandom, FaRedo, FaVolumeUp } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 
 const DreamStreamer = ({ signOut }) => {
   const [albums, setAlbums] = useState([]);
@@ -14,7 +14,7 @@ const DreamStreamer = ({ signOut }) => {
   const [shuffle, setShuffle] = useState(false); // Shuffle mode
   const [repeat, setRepeat] = useState(false); // Repeat mode
   const [purchasedAlbums, setPurchasedAlbums] = useState([]);
-
+  const navigate = useNavigate(); // Hook for navigation
 
 
   
@@ -39,19 +39,34 @@ const DreamStreamer = ({ signOut }) => {
   }, []);
 
   // Function to handle purchasing an album
-  const handlePurchase = (album) => {
-    alert(`You have purchased ${album.albumName}!`);
+const handlePurchase = (album) => {
+  // Check if the album is already purchased
+  const isPurchased = purchasedAlbums.some(purchasedAlbum => purchasedAlbum.albumId === album.albumId);
 
-    // Simulate a purchase by adding the album to purchased albums
-    const newPurchasedAlbums = [...purchasedAlbums, album];
-    setPurchasedAlbums(newPurchasedAlbums);
+  if (isPurchased) {
+    alert(`You have already purchased ${album.albumName}!`);
+    return; // Exit the function if already purchased
+  }
 
-    // Store purchased albums in localStorage for persistence
-    localStorage.setItem('purchasedAlbums', JSON.stringify(newPurchasedAlbums));
-  };
+  // If not purchased, proceed with the purchase
+  alert(`You have purchased ${album.albumName}!`);
+
+  // Simulate a purchase by adding the album to purchased albums
+  const newPurchasedAlbums = [...purchasedAlbums, album];
+  setPurchasedAlbums(newPurchasedAlbums);
+
+  // Store purchased albums in localStorage for persistence
+  localStorage.setItem('purchasedAlbums', JSON.stringify(newPurchasedAlbums));
+};
 
   // Function to view purchased albums (navigates to a different page)
   const viewPurchasedAlbums = () => {
+    if (purchasedAlbums.length === 0) {
+      alert("You haven't purchased any albums.");
+      navigate('/'); // Redirect to the home page
+      return;
+    }
+
     // For simplicity, you can navigate to a different view here
     // Or simply set a flag to display purchased albums
     setAlbums(purchasedAlbums);
